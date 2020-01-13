@@ -2,6 +2,7 @@ Option Explicit On
 Option Strict On
 Imports System.Linq
 Imports System.Text
+Imports System.IO
 
 
 
@@ -11,36 +12,39 @@ Public Class fwterm
     Private mPort As New IO.Ports.SerialPort
     Private mTxt As w2TxtBuffer
 
-    Dim AC As String
-    Dim SCELLID As String
-    Dim PCELLID As String
-    Dim C1 As String
-    Dim ARFCN As String
+    Dim AC As String        'Area Code
+    Dim SCELLID As String   'Serving Cell ID - GSM Mode
+    Dim PCELLID As String   'Physciall Cell ID - GSM Mode
+    Dim C1 As String        'no idea why i mde this
+    Dim ARFCN As String     'ARFCN
     Dim LEVEL As String
     Dim QUAL As String
     Dim eNB As String
     Dim PCI As String
-    Dim RSRP As String
+    Dim RSRP As String      'self explanatory
     Dim RSRQ As String
     Dim RSSNR As String
     Dim CQI As String
     Dim RSSI As String
     Dim TAC As String
-    Dim OpMode As String
-    Dim SysMode As String
-    Dim MccMnc As String
-    Dim FreqB As String
+    Dim OpMode As String    'operation mode Online or LPM etc
+    Dim SysMode As String   'NB-IoT or GSM
+    Dim MccMnc As String    'MCC-MNC
+    Dim FreqB As String     'Frequency Band
     Dim dlbw As String
     Dim ulbw As String
     Dim CELLID As String
-    Dim Lat As String
-    Dim Longi As String
+    Dim Lat As String       'Latitude
+    Dim Longi As String     'Longitude
 
-    Dim fname As String
+    Dim fname As String     'file name
 
 
 
     Private Sub ConnectPort()
+
+        'handles connecting to the port pretty much nothing that requires your attention
+
         'check port properties
         If cboPort.SelectedIndex = -1 Then Return
         If cboRate.SelectedIndex = -1 Then Return
@@ -69,7 +73,7 @@ Public Class fwterm
 
         'set 
         mPort.NewLine = ControlChars.Cr
-        'mPort.ReadTimeout = 1000   'this is not needed as we are going to use DataReceived event
+        'mPort.ReadTimeout = 1000   'this is not needed as we are going to use DataReceived event // yeah ditched that and opted for mPort.ReadExisting. Cheers !!
         'AddHandler mPort.DataReceived, AddressOf DataReceived
 
         'save info
@@ -82,6 +86,9 @@ Public Class fwterm
 
 
     Private Sub fwterm_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.Load
+
+        'handles what happens when the application is first opened
+
         Dim i As Integer
         Dim s As String
         Dim x As Object()
@@ -166,7 +173,7 @@ Public Class fwterm
             ConnectPort()
         Else
             If mPort.IsOpen Then
-                mPort.WriteLine("AT+CGNSPWR=0")
+                mPort.WriteLine("AT+CGNSPWR=0")        'incase user forgets to power down GPS
                 mPort.Close()
                 'RemoveHandler mPort.DataReceived, AddressOf DataReceived
             End If
@@ -192,26 +199,10 @@ Public Class fwterm
         btnConnect.Image = ImageList.Images(btnConnect.Text)
     End Sub
 
-    Public Function RemoveWhitespace(fullString As String) As String
-        Return New String(fullString.Where(Function(x) Not Char.IsWhiteSpace(x)).ToArray())
-    End Function
-
-    Public Function CID(tmp As Integer) As String
-        Dim temp As String
-        Dim temp1 As String
-        Dim temp2 As Integer
-        temp2 = Convert.ToInt32(tmp)
-        temp = Hex(tmp)
-        temp = temp.Remove(temp.Length - 2)
-        temp1 = Convert.ToInt32(temp, 16).ToString
-
-
-        Return temp1
-
-    End Function
 
     Private Sub CPSI_Command()
 
+        'runs the AT+CPSI? command and parses the result discarded in favour of AT+CPSI?;+CGNSINF
 
         mPort.DiscardInBuffer()
         mPort.DiscardInBuffer()
@@ -219,13 +210,13 @@ Public Class fwterm
         Dim Incoming As String
         mPort.WriteLine("AT+CPSI?")
         'RemoveHandler mPort.DataReceived, AddressOf DataReceived
-        Incoming = mPort.ReadExisting()
-        If Incoming Is Nothing Then
+        Incoming = mPort.ReadExisting()                                     'reads the return string i.e recieve buffer
+        If Incoming Is Nothing Then                                         'handles if buffer is null
         Else
-            Dim outgoing() As String = Split(Incoming, ":")
-            Dim tempstr As String = outgoing(outgoing.Length - 1)
-            Dim incoming_1() As String = Split(tempstr, ",")
-            SysMode = ArrayAccess(incoming_1, 0)
+            Dim outgoing() As String = Split(Incoming, ":")                 'splits the string at token :
+            Dim tempstr As String = outgoing(outgoing.Length - 1)           'primitive way to remove CR and LF chaarcters
+            Dim incoming_1() As String = Split(tempstr, ",")                'Splits the string at every ,
+            SysMode = ArrayAccess(incoming_1, 0)                            'assigns split string values to variables
             OpMode = ArrayAccess(incoming_1, 1)
             MccMnc = ArrayAccess(incoming_1, 2)
             TAC = ACParse(ArrayAccess(incoming_1, 3))
@@ -245,8 +236,8 @@ Public Class fwterm
 
             lblSysMode.Text = SysMode
             lblOpMode.Text = OpMode
-            Try
-                If SysMode.Substring(0, 4) = " LTE" Then
+            Try                                                             'checks the System Mode and parses the Cell Id if in LTE mode and does nothing if in GSM mode
+                If SysMode.Substring(0, 4) = " LTE" Then                    'since in LTE mode Cell ID is returned in hex form more info @CIDParse funct.
                     SCELLID = CIDParse(SCELLID)
                 Else
                     SCELLID = SCELLID
@@ -271,7 +262,7 @@ Public Class fwterm
 
 
         End If
-        Me.DataGridView1.Rows.Add(DateTime.Now.ToString, TAC, SCELLID, PCELLID, ARFCN, RSRP, RSRQ, Lat, Longi)
+        Me.DataGridView1.Rows.Add(DateTime.Now.ToString, TAC, SCELLID, PCELLID, ARFCN, RSRP, RSRQ, Lat, Longi)  'adds details to table
         SysMode = String.Empty
         OpMode = String.Empty
         MccMnc = String.Empty
@@ -293,21 +284,22 @@ Public Class fwterm
 
     Private Sub CPSI_CGNSINF_Command()
 
+        'the used function
 
         Dim outgoing() As String
         mPort.WriteLine("AT+CPSI?;+CGNSINF")
 
 
-        Dim Incoming As String = mPort.ReadExisting()
-        Incoming += mPort.ReadExisting()
+        Dim Incoming As String = mPort.ReadExisting()           'reads incoming
+        Incoming += mPort.ReadExisting()                        'reads and concatanates if return string exceeded the buffer size
         Incoming += mPort.ReadExisting()
         Incoming += mPort.ReadExisting()
         If Incoming Is Nothing Then
         Else
-            outgoing = System.Text.RegularExpressions.Regex.Split(Incoming, Environment.NewLine)
+            outgoing = System.Text.RegularExpressions.Regex.Split(Incoming, Environment.NewLine)    'splits at <CR><LF> characters
 
             Dim CPSI As String
-            Try
+            Try                                                 'handles partial returns
                 CPSI = outgoing(1)
             Catch ex As Exception
                 CPSI = "+CPSI:0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
@@ -322,7 +314,7 @@ Public Class fwterm
                 CGNSINF = "+CGNSINF:0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
             End Try
 
-            Dim CPSI_Split() As String = Split(CPSI, ":")
+            Dim CPSI_Split() As String = Split(CPSI, ":")                               'handles the return for CPSI? part
             Dim CPSI_Splitted As String = CPSI_Split(CPSI_Split.Length - 1)
             Dim incoming_1() As String = Split(CPSI_Splitted, ",")
             SysMode = ArrayAccess(incoming_1, 0)
@@ -345,7 +337,7 @@ Public Class fwterm
             Dim CGNSINF_Split() As String
             'Dim incoming_2() As String = Split(CGNSINF_Split(1), ",")
 
-            Try
+            Try                                                                         'handles the return for +GGNSINF
                 CGNSINF_Split = Split(CGNSINF, ":", 2)
             Catch ex As Exception
                 CGNSINF_Split = Split("CGNSINF:0,0,0,0,0,0,0,0,0,0", ":")
@@ -406,7 +398,7 @@ Public Class fwterm
     End Sub
 
     Public Function ArrayAccess(ArrayPass As String(), index As Integer) As String
-
+        'to access array safely in case of index out of bounds exception
         Dim returnstr As String
         Try
             returnstr = ArrayPass(index)
@@ -418,6 +410,8 @@ Public Class fwterm
     End Function
 
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
+
+        'execution for the logging function same as the CPSI_CGNSINF_Command() but doesn't change the labels
 
 
         Dim outgoing() As String
@@ -530,15 +524,20 @@ Public Class fwterm
     End Sub
 
     Private Sub Timer2_Tick(sender As Object, e As EventArgs) Handles Timer2.Tick
+        'side delay function instead of sleeping thread
         Timer2.Stop()
     End Sub
 
     Private Sub Delay(time As Integer)
+        'delay function to avoid overlaoding port with commands
         Timer2.Interval = time
         Timer2.Start()
     End Sub
 
     Private Function ACParse(tmp As String) As String
+
+        'parsing the Area code since its returned as an hex value
+
         Dim temp() As String = Split(tmp, "x")
         Dim temp1 As String = ArrayAccess(temp, 1)
         'While temp1 = "Error"
@@ -552,6 +551,7 @@ Public Class fwterm
     End Function
 
     Public Function HexConvert(str As String) As Integer
+        'converts hex to integer
 
         Dim returnstr As Integer
         Try
@@ -564,6 +564,9 @@ Public Class fwterm
     End Function
 
     Private Function CIDParse(tmp As String) As String
+
+        'parses the Cell ID return hex string
+
         Dim temp As String
         temp = IntConvert(tmp)
         Dim temp1 As String = temp.Substring(0, 5)
@@ -574,7 +577,7 @@ Public Class fwterm
     End Function
 
     Public Function IntConvert(tmp As String) As String
-
+        'converts integer to hex string
         Dim returnstr As String
         Try
             returnstr = Conversion.Hex(CInt(tmp))
@@ -586,7 +589,11 @@ Public Class fwterm
     End Function
 
     Private Sub DataGridToCSV(ByRef dt As DataGridView, Qualifier As String)
-        Dim TempDirectory As String = "C:\Users\RuveeKalu\Desktop\Mobitel\BSS\NB IoT Hat\DT Soft\LTE NB IOT Drive Tester\Export"
+
+        'exports table
+
+        Dim pwd As String = My.Computer.FileSystem.CurrentDirectory
+        Dim TempDirectory As String = pwd & "\Export"
         System.IO.Directory.CreateDirectory(TempDirectory)
         Dim oWrite As System.IO.StreamWriter
         Dim file As String = fname & ".csv"
@@ -641,8 +648,7 @@ Public Class fwterm
     End Sub
 
     Private Sub GNSS_Start()
-
-
+        'unused
         mPort.WriteLine("AT+CGNSPORT=3")
         Timer3.Interval = 3000
 
@@ -653,18 +659,23 @@ Public Class fwterm
     End Sub
 
     Private Sub btnDevMgr_Click(sender As Object, e As EventArgs) Handles btnDevMgr.Click
+        'opens device manager
         Process.Start("devmgmt.msc")
     End Sub
 
     Private Sub btnLocaOn_Click(sender As Object, e As EventArgs) Handles btnLocaOn.Click
+        'RF up
         mPort.WriteLine("AT+CGNSPWR=1")
     End Sub
 
     Private Sub btnLocaOff_Click(sender As Object, e As EventArgs) Handles btnLocaOff.Click
+        'GPS Power OFF
         mPort.WriteLine("AT+CGNSPWR=0")
     End Sub
 
     Private Sub GPS_Fix()
+
+        'Gets location only
 
         Dim Incoming As String
         mPort.WriteLine("AT+CGNSINF")
@@ -695,11 +706,11 @@ Public Class fwterm
 
         'AddHandler mPort.DataReceived, AddressOf DataReceived
 
-        mPort.DiscardOutBuffer()
-        mPort.DiscardInBuffer()
     End Sub
 
     Private Function Get_GPS_Fix() As Object
+
+        'different implementation of GPS_Fix()
 
         Dim Incoming As String
         mPort.WriteLine("AT+CGNSINF")
@@ -751,23 +762,11 @@ Public Class fwterm
     End Sub
 
     Private Sub btnIOT_Click(sender As Object, e As EventArgs) Handles btnIOT.Click
-        mPort.WriteLine("AT+CFUN=4")
-        Delay(10000)
-        mPort.WriteLine("AT+CNMP=38")
-        Delay(10000)
-        mPort.WriteLine("AT+CFUN=1")
-        Delay(10000)
-        'subStr = 3
+        mPort.WriteLine("AT+CFUN=4;+CNMP=38;+CFUN=1")
     End Sub
 
     Private Sub btnGSM_Click(sender As Object, e As EventArgs) Handles btnGSM.Click
-        mPort.WriteLine("AT+CFUN=4")
-        Delay(10000)
-        mPort.WriteLine("AT+CNMP=13")
-        Delay(10000)
-        mPort.WriteLine("AT+CFUN=1")
-        Delay(10000)
-        'subStr = 4
+        mPort.WriteLine("AT+CFUN=4;+CNMP=13;+CFUN=1")
     End Sub
 
     Private Sub btnLog_Click(sender As Object, e As EventArgs) Handles btnLog.Click
@@ -787,19 +786,33 @@ Public Class fwterm
     End Sub
 
     Private Sub btnRFUp_Click(sender As Object, e As EventArgs) Handles btnRFUp.Click
+        'RF Up
         mPort.WriteLine("AT+CFUN=1")
         mPort.DiscardInBuffer()
         mPort.DiscardInBuffer()
     End Sub
 
     Private Sub btnRFDn_Click(sender As Object, e As EventArgs) Handles btnRFDn.Click
+        'RF Down
         mPort.WriteLine("AT+CFUN=4")
         mPort.DiscardInBuffer()
         mPort.DiscardInBuffer()
     End Sub
 
 
-    Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+
+
+    Private Sub Button1_Click(sender As Object, e As EventArgs)
+
+    End Sub
+
+    Private Sub Button1_Click_1(sender As Object, e As EventArgs) Handles Button1.Click
+        Me.DataGridView1.Rows.Clear()
+    End Sub
+
+    Private Sub btnCellLock_Click(sender As Object, e As EventArgs) Handles btnCellLock.Click
+
+        'Locks Cell
         Dim message, title, defaultValue As String
         Dim myValue As Object
 
@@ -819,14 +832,5 @@ Public Class fwterm
             mPort.DiscardInBuffer()
             mPort.DiscardInBuffer()
         End If
-
-    End Sub
-
-    Private Sub Button1_Click(sender As Object, e As EventArgs)
-
-    End Sub
-
-    Private Sub Button1_Click_1(sender As Object, e As EventArgs) Handles Button1.Click
-        Me.DataGridView1.Rows.Clear()
     End Sub
 End Class

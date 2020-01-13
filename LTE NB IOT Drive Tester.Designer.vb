@@ -22,8 +22,11 @@ Partial Class fwterm
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(fwterm))
         Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.StatusStrip2 = New System.Windows.Forms.StatusStrip()
+        Me.lblPort = New System.Windows.Forms.ToolStripStatusLabel()
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.btnLogClear = New System.Windows.Forms.TabPage()
+        Me.Button1 = New System.Windows.Forms.Button()
         Me.btnGSM = New System.Windows.Forms.Button()
         Me.btnIOT = New System.Windows.Forms.Button()
         Me.Label14 = New System.Windows.Forms.Label()
@@ -51,10 +54,7 @@ Partial Class fwterm
         Me.btnLocaOn = New System.Windows.Forms.Button()
         Me.pgFunction = New System.Windows.Forms.TabPage()
         Me.btnRFDn = New System.Windows.Forms.Button()
-        Me.Button5 = New System.Windows.Forms.Button()
-        Me.Button4 = New System.Windows.Forms.Button()
-        Me.Button3 = New System.Windows.Forms.Button()
-        Me.Button2 = New System.Windows.Forms.Button()
+        Me.btnCellLock = New System.Windows.Forms.Button()
         Me.btnRFUp = New System.Windows.Forms.Button()
         Me.btnDevMgr = New System.Windows.Forms.Button()
         Me.lblRSSNR = New System.Windows.Forms.Label()
@@ -99,16 +99,16 @@ Partial Class fwterm
         Me.Timer3 = New System.Windows.Forms.Timer(Me.components)
         Me.Timer4 = New System.Windows.Forms.Timer(Me.components)
         Me.Timer5 = New System.Windows.Forms.Timer(Me.components)
-        Me.StatusStrip2 = New System.Windows.Forms.StatusStrip()
-        Me.lblPort = New System.Windows.Forms.ToolStripStatusLabel()
-        Me.Button1 = New System.Windows.Forms.Button()
+        Me.Button5 = New System.Windows.Forms.Button()
+        Me.Button2 = New System.Windows.Forms.Button()
+        Me.Button3 = New System.Windows.Forms.Button()
         Me.Panel1.SuspendLayout()
+        Me.StatusStrip2.SuspendLayout()
         Me.TabControl1.SuspendLayout()
         Me.btnLogClear.SuspendLayout()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.pgGPS.SuspendLayout()
         Me.pgFunction.SuspendLayout()
-        Me.StatusStrip2.SuspendLayout()
         Me.SuspendLayout()
         '
         'Panel1
@@ -155,8 +155,24 @@ Partial Class fwterm
         Me.Panel1.Location = New System.Drawing.Point(0, 0)
         Me.Panel1.Margin = New System.Windows.Forms.Padding(4)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(1087, 735)
+        Me.Panel1.Size = New System.Drawing.Size(1378, 888)
         Me.Panel1.TabIndex = 0
+        '
+        'StatusStrip2
+        '
+        Me.StatusStrip2.ImageScalingSize = New System.Drawing.Size(20, 20)
+        Me.StatusStrip2.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.lblPort})
+        Me.StatusStrip2.Location = New System.Drawing.Point(0, 862)
+        Me.StatusStrip2.Name = "StatusStrip2"
+        Me.StatusStrip2.Size = New System.Drawing.Size(1378, 26)
+        Me.StatusStrip2.TabIndex = 122
+        Me.StatusStrip2.Text = "StatusStrip2"
+        '
+        'lblPort
+        '
+        Me.lblPort.Name = "lblPort"
+        Me.lblPort.Size = New System.Drawing.Size(153, 20)
+        Me.lblPort.Text = "ToolStripStatusLabel1"
         '
         'TabControl1
         '
@@ -166,7 +182,7 @@ Partial Class fwterm
         Me.TabControl1.Location = New System.Drawing.Point(247, 26)
         Me.TabControl1.Name = "TabControl1"
         Me.TabControl1.SelectedIndex = 0
-        Me.TabControl1.Size = New System.Drawing.Size(834, 684)
+        Me.TabControl1.Size = New System.Drawing.Size(1128, 833)
         Me.TabControl1.TabIndex = 4
         '
         'btnLogClear
@@ -184,9 +200,18 @@ Partial Class fwterm
         Me.btnLogClear.Location = New System.Drawing.Point(4, 25)
         Me.btnLogClear.Name = "btnLogClear"
         Me.btnLogClear.Padding = New System.Windows.Forms.Padding(3)
-        Me.btnLogClear.Size = New System.Drawing.Size(826, 655)
+        Me.btnLogClear.Size = New System.Drawing.Size(1120, 804)
         Me.btnLogClear.TabIndex = 0
         Me.btnLogClear.Text = "DT"
+        '
+        'Button1
+        '
+        Me.Button1.Location = New System.Drawing.Point(477, 22)
+        Me.Button1.Name = "Button1"
+        Me.Button1.Size = New System.Drawing.Size(117, 25)
+        Me.Button1.TabIndex = 137
+        Me.Button1.Text = "Clear Log"
+        Me.Button1.UseVisualStyleBackColor = True
         '
         'btnGSM
         '
@@ -256,7 +281,7 @@ Partial Class fwterm
         Me.DataGridView1.ReadOnly = True
         Me.DataGridView1.RowHeadersWidth = 51
         Me.DataGridView1.RowTemplate.Height = 24
-        Me.DataGridView1.Size = New System.Drawing.Size(808, 578)
+        Me.DataGridView1.Size = New System.Drawing.Size(1058, 727)
         Me.DataGridView1.TabIndex = 130
         '
         'colTIME
@@ -353,7 +378,7 @@ Partial Class fwterm
         Me.pgGPS.Location = New System.Drawing.Point(4, 25)
         Me.pgGPS.Name = "pgGPS"
         Me.pgGPS.Padding = New System.Windows.Forms.Padding(3)
-        Me.pgGPS.Size = New System.Drawing.Size(772, 681)
+        Me.pgGPS.Size = New System.Drawing.Size(1120, 804)
         Me.pgGPS.TabIndex = 1
         Me.pgGPS.Text = "GPS"
         '
@@ -428,14 +453,14 @@ Partial Class fwterm
         Me.pgFunction.BackColor = System.Drawing.SystemColors.Control
         Me.pgFunction.Controls.Add(Me.btnRFDn)
         Me.pgFunction.Controls.Add(Me.Button5)
-        Me.pgFunction.Controls.Add(Me.Button4)
+        Me.pgFunction.Controls.Add(Me.btnCellLock)
         Me.pgFunction.Controls.Add(Me.Button3)
         Me.pgFunction.Controls.Add(Me.Button2)
         Me.pgFunction.Controls.Add(Me.btnRFUp)
         Me.pgFunction.Location = New System.Drawing.Point(4, 25)
         Me.pgFunction.Name = "pgFunction"
         Me.pgFunction.Padding = New System.Windows.Forms.Padding(3)
-        Me.pgFunction.Size = New System.Drawing.Size(772, 681)
+        Me.pgFunction.Size = New System.Drawing.Size(1120, 804)
         Me.pgFunction.TabIndex = 2
         Me.pgFunction.Text = "Funct."
         '
@@ -448,41 +473,14 @@ Partial Class fwterm
         Me.btnRFDn.Text = "RF Down"
         Me.btnRFDn.UseVisualStyleBackColor = True
         '
-        'Button5
+        'btnCellLock
         '
-        Me.Button5.Location = New System.Drawing.Point(12, 192)
-        Me.Button5.Name = "Button5"
-        Me.Button5.Size = New System.Drawing.Size(196, 68)
-        Me.Button5.TabIndex = 4
-        Me.Button5.Text = "Button5"
-        Me.Button5.UseVisualStyleBackColor = True
-        '
-        'Button4
-        '
-        Me.Button4.Location = New System.Drawing.Point(214, 39)
-        Me.Button4.Name = "Button4"
-        Me.Button4.Size = New System.Drawing.Size(196, 68)
-        Me.Button4.TabIndex = 3
-        Me.Button4.Text = "Lock EARFCN"
-        Me.Button4.UseVisualStyleBackColor = True
-        '
-        'Button3
-        '
-        Me.Button3.Location = New System.Drawing.Point(214, 113)
-        Me.Button3.Name = "Button3"
-        Me.Button3.Size = New System.Drawing.Size(196, 68)
-        Me.Button3.TabIndex = 2
-        Me.Button3.Text = "Button3"
-        Me.Button3.UseVisualStyleBackColor = True
-        '
-        'Button2
-        '
-        Me.Button2.Location = New System.Drawing.Point(214, 192)
-        Me.Button2.Name = "Button2"
-        Me.Button2.Size = New System.Drawing.Size(196, 68)
-        Me.Button2.TabIndex = 1
-        Me.Button2.Text = "Button2"
-        Me.Button2.UseVisualStyleBackColor = True
+        Me.btnCellLock.Location = New System.Drawing.Point(214, 39)
+        Me.btnCellLock.Name = "btnCellLock"
+        Me.btnCellLock.Size = New System.Drawing.Size(196, 68)
+        Me.btnCellLock.TabIndex = 3
+        Me.btnCellLock.Text = "Lock EARFCN"
+        Me.btnCellLock.UseVisualStyleBackColor = True
         '
         'btnRFUp
         '
@@ -900,36 +898,38 @@ Partial Class fwterm
         'Timer3
         '
         '
-        'StatusStrip2
+        'Button5
         '
-        Me.StatusStrip2.ImageScalingSize = New System.Drawing.Size(20, 20)
-        Me.StatusStrip2.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.lblPort})
-        Me.StatusStrip2.Location = New System.Drawing.Point(0, 709)
-        Me.StatusStrip2.Name = "StatusStrip2"
-        Me.StatusStrip2.Size = New System.Drawing.Size(1087, 26)
-        Me.StatusStrip2.TabIndex = 122
-        Me.StatusStrip2.Text = "StatusStrip2"
+        Me.Button5.Location = New System.Drawing.Point(12, 192)
+        Me.Button5.Name = "Button5"
+        Me.Button5.Size = New System.Drawing.Size(196, 68)
+        Me.Button5.TabIndex = 4
+        Me.Button5.Text = "Button5"
+        Me.Button5.UseVisualStyleBackColor = True
         '
-        'lblPort
+        'Button2
         '
-        Me.lblPort.Name = "lblPort"
-        Me.lblPort.Size = New System.Drawing.Size(153, 20)
-        Me.lblPort.Text = "ToolStripStatusLabel1"
+        Me.Button2.Location = New System.Drawing.Point(214, 192)
+        Me.Button2.Name = "Button2"
+        Me.Button2.Size = New System.Drawing.Size(196, 68)
+        Me.Button2.TabIndex = 1
+        Me.Button2.Text = "Button2"
+        Me.Button2.UseVisualStyleBackColor = True
         '
-        'Button1
+        'Button3
         '
-        Me.Button1.Location = New System.Drawing.Point(477, 22)
-        Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(117, 25)
-        Me.Button1.TabIndex = 137
-        Me.Button1.Text = "Clear Log"
-        Me.Button1.UseVisualStyleBackColor = True
+        Me.Button3.Location = New System.Drawing.Point(214, 113)
+        Me.Button3.Name = "Button3"
+        Me.Button3.Size = New System.Drawing.Size(196, 68)
+        Me.Button3.TabIndex = 2
+        Me.Button3.Text = "Button3"
+        Me.Button3.UseVisualStyleBackColor = True
         '
         'fwterm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1091, 735)
+        Me.ClientSize = New System.Drawing.Size(1391, 888)
         Me.Controls.Add(Me.Panel1)
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Margin = New System.Windows.Forms.Padding(4)
@@ -937,6 +937,8 @@ Partial Class fwterm
         Me.Text = "Form1"
         Me.Panel1.ResumeLayout(False)
         Me.Panel1.PerformLayout()
+        Me.StatusStrip2.ResumeLayout(False)
+        Me.StatusStrip2.PerformLayout()
         Me.TabControl1.ResumeLayout(False)
         Me.btnLogClear.ResumeLayout(False)
         Me.btnLogClear.PerformLayout()
@@ -944,8 +946,6 @@ Partial Class fwterm
         Me.pgGPS.ResumeLayout(False)
         Me.pgGPS.PerformLayout()
         Me.pgFunction.ResumeLayout(False)
-        Me.StatusStrip2.ResumeLayout(False)
-        Me.StatusStrip2.PerformLayout()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1022,12 +1022,12 @@ Partial Class fwterm
     Friend WithEvents colLong As DataGridViewTextBoxColumn
     Friend WithEvents pgFunction As TabPage
     Friend WithEvents btnRFDn As Button
-    Friend WithEvents Button5 As Button
-    Friend WithEvents Button4 As Button
-    Friend WithEvents Button3 As Button
-    Friend WithEvents Button2 As Button
+    Friend WithEvents btnCellLock As Button
     Friend WithEvents btnRFUp As Button
     Friend WithEvents StatusStrip2 As StatusStrip
     Friend WithEvents lblPort As ToolStripStatusLabel
     Friend WithEvents Button1 As Button
+    Friend WithEvents Button5 As Button
+    Friend WithEvents Button3 As Button
+    Friend WithEvents Button2 As Button
 End Class
