@@ -9,12 +9,6 @@ https://www.waveshare.com/wiki/SIM7000E_NB-IoT_HAT - Waveshare Module used in my
 Simple to use, clone the repo. Open in VS and build the programme. Find out the COM Port number of the AT Command Port use the convinently located Device Manager open button to find that out.
 Set the Baud Rate and other properties (refer to your module manual) and Click Connect. Stop Bits mustn't be non sinc eits not supported although the option has been included.
 
-The 3 tabs available enable your interaction with the module,
-
-DT Soft - For drive testing
-GPS - For the GPS Module
-Funct. - To carry out basic functions
-
 ### DT Soft Tab
 
 Get Details button returns the parsed result of the "AT+CPSI?;+CGNSINF" command if GPS isn't enabled or no location is fixed it will not record any value.
